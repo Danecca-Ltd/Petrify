@@ -49,7 +49,7 @@ if _HERE not in sys.path:
 import shrinkwrap_updater as updater  # noqa: E402
 importlib.reload(updater)  # pick up a new version on add-in Stop/Run
 
-SHRINKWRAP_VERSION = '1.4.0'
+SHRINKWRAP_VERSION = '1.4.1'
 
 CMD_ID = 'DaneccaShrinkwrapCmd'
 CMD_NAME = 'Petrify'
@@ -1795,7 +1795,7 @@ def _start_update_check():
 # ----------------------------------------------------------------------------
 
 COMMANDS = (
-    (CMD_ID, CMD_NAME, CMD_TOOLTIP, './resources/ShrinkwrapButton', ShrinkwrapCreatedHandler),
+    (CMD_ID, CMD_NAME, CMD_TOOLTIP, './resources/PetrifyButton', ShrinkwrapCreatedHandler),
     (SETMASS_CMD_ID, SETMASS_CMD_NAME, SETMASS_TOOLTIP, './resources/OrdainMassButton',
      SetMassCreatedHandler),
     (UPDATE_CMD_ID, UPDATE_CMD_NAME, UPDATE_TOOLTIP, './resources/UpdateButton',

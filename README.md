@@ -1,6 +1,6 @@
 # Shrinkwrap
 
-Fusion add-in with buttons in **Solid → Modify**. Version 1.4.0.
+Fusion add-in with buttons in **Solid → Modify**. Version 1.4.1.
 
 - **Petrify** (formerly *Shrinkwrap*) turns the open part or assembly into one solid body in a new internal
   component, with the same mass and a marker at the original center of mass. On a design
