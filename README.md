@@ -1,16 +1,16 @@
 # Shrinkwrap
 
-Fusion add-in with buttons in **Solid → Modify**. Version 1.3.1.
+Fusion add-in with buttons in **Solid → Modify**. Version 1.4.0.
 
-- **Shrinkwrap** turns the open part or assembly into one solid body in a new internal
+- **Petrify** (formerly *Shrinkwrap*) turns the open part or assembly into one solid body in a new internal
   component, with the same mass and a marker at the original center of mass. On a design
   with a single visible body it fills that body's cavities in place instead (see
   *Single-body mode*).
-- **Set Mass** gives the selected bodies an exact total mass by adjusting their material's
-  density.
+- **Ordain Mass** (formerly *Set Mass*) gives the selected bodies an exact total mass by
+  adjusting their material's density.
 - **Shrinkwrap Updates** checks GitHub for a newer version and installs it (see *Updates*).
 
-## Shrinkwrap dialog
+## Petrify dialog
 
 - **Fill**
   - *Sealed cavities only*: fills cavities that are completely closed off. Any path to
@@ -38,14 +38,14 @@ Fusion add-in with buttons in **Solid → Modify**. Version 1.3.1.
 The dialog remembers your last choices until Fusion is restarted. The summary ends with the
 total time and a per-step breakdown.
 
-The dialog also reminds you: **if Fusion freezes, restart it and run Shrinkwrap again**
+The dialog also reminds you: **if Fusion freezes, restart it and run Petrify again**
 (save first) — the part that caused the freeze is skipped automatically (see *Logs*).
 
-## Assembly mode (what Shrinkwrap does)
+## Assembly mode (what Petrify does)
 
 1. Takes every **visible solid body** in the design, including bodies in sub-assemblies
    and referenced components. Hidden bodies and surface bodies are ignored. Components
-   made by an earlier Shrinkwrap run are ignored too.
+   made by an earlier Petrify run are ignored too.
 2. Unites them into one solid. Faces where parts touch, and parts buried inside other
    parts, disappear.
 3. Fills sealed internal cavities, and with Fill = Envelope everything enclosed.
@@ -63,28 +63,28 @@ changed.
 ## Single-body mode
 
 When the design has exactly one visible solid body — a shrinkwrap with its source parts
-hidden, or a one-body part — Shrinkwrap fills that body's cavities **in place** (the OK
+hidden, or a one-body part — Petrify fills that body's cavities **in place** (the OK
 button reads *Fill cavities*) and re-tunes the density so its mass stays the same, or
 matches a manual mass. Use it as a second pass: hide the sources and run it on the
 shrinkwrap with a different wall thickness, or on any single-body part to "de-swiss-cheese"
 it.
 
-- A Shrinkwrap output in a parametric design has its Base Feature updated, so the timeline
+- A Petrify output in a parametric design has its Base Feature updated, so the timeline
   doesn't grow.
 - Any other body is replaced by a new Base Feature plus a Remove feature for the old body.
   Anything that referenced the old body's faces (joints, sketches) will need re-linking.
 
-## Set Mass
+## Ordain Mass
 
 Select one or more solid bodies (the only visible body is preselected), type the total
-mass, OK. The bodies get a material of their own — a copy of their current material named
+mass, *Ordain mass*. The bodies get a material of their own — a copy of their current material named
 `<component> material` (`<design> material` for root bodies), or the existing one if it
-already has that name or was made by Shrinkwrap — and its density is tuned so the
+already has that name or was made by Petrify — and its density is tuned so the
 selection weighs exactly that. Other bodies sharing the original material are unaffected.
 
 ## Logs
 
-Every Shrinkwrap and Set Mass run writes a log to `Documents\Shrinkwrap logs\` (the newest
+Every Petrify and Ordain Mass run writes a log to `Documents\Shrinkwrap logs\` (the newest
 30 are kept; the summary shows the file name). Each line is written to disk immediately,
 so if Fusion freezes or crashes the log still ends with the step it was on — for example
 `Union 57/58: "Sub / Bracket:1" (412 faces, ...)` with no `united` line after it means
@@ -92,7 +92,7 @@ Fusion got stuck uniting that body. Errors are logged with their full traceback.
 
 **Freeze recovery.** Fusion's geometry engine can hang for good on some unions (typically
 a nut whose bore sits exactly on a thread cylinder), and an add-in can't interrupt it.
-So Shrinkwrap names each body in `union in progress.json` before uniting it and removes
+So Petrify names each body in `union in progress.json` before uniting it and removes
 the file afterwards. If Fusion dies mid-union, the next run finds the file, adds that body
 to `problem bodies.json` for that design, and skips it from then on — the summary lists
 skipped bodies, which are missing from the shape but still count towards the mass. One

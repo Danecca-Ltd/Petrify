@@ -49,10 +49,10 @@ if _HERE not in sys.path:
 import shrinkwrap_updater as updater  # noqa: E402
 importlib.reload(updater)  # pick up a new version on add-in Stop/Run
 
-SHRINKWRAP_VERSION = '1.3.1'
+SHRINKWRAP_VERSION = '1.4.0'
 
 CMD_ID = 'DaneccaShrinkwrapCmd'
-CMD_NAME = 'Shrinkwrap'
+CMD_NAME = 'Petrify'
 CMD_TOOLTIP = ('Create a solid body from the external surfaces of the whole design, '
                'in a new component, with a material that matches the original mass. '
                'On a single-body design, fills that body\'s cavities in place.')
@@ -679,7 +679,7 @@ class _RayProgress:
     def __init__(self, total):
         self.dialog = _app().userInterface.createProgressDialog()
         self.dialog.isCancelButtonShown = True
-        self.dialog.show('Shrinkwrap', 'Envelope: casting ray %v of %m', 0, max(1, total))
+        self.dialog.show(CMD_NAME, 'Envelope: casting ray %v of %m', 0, max(1, total))
 
     def tick(self, count):
         if count % PROGRESS_EVERY:
@@ -1141,7 +1141,7 @@ def _run_shrinkwrap(design, add_com, envelope, detail, wall, manual_mass):
     tbm = adsk.fusion.TemporaryBRepManager.get()
     progress = ui.createProgressDialog()
     progress.isCancelButtonShown = True
-    progress.show('Shrinkwrap', 'Uniting body %v of %m', 0, len(bodies))
+    progress.show(CMD_NAME, 'Uniting body %v of %m', 0, len(bodies))
     try:
         with timings.phase('Union'):
             merged, failed, skipped = _union_bodies(tbm, bodies, progress, design_key, skip)
@@ -1369,7 +1369,7 @@ class ShrinkwrapExecuteHandler(adsk.core.CommandEventHandler):
             if manual_mass is not None:
                 _last_options['mass'] = manual_mass
 
-            with _logged_run('Shrinkwrap'):
+            with _logged_run(CMD_NAME):
                 log_line = _log_path_line()
                 design = _active_design()
                 if not design:
@@ -1386,16 +1386,16 @@ class ShrinkwrapExecuteHandler(adsk.core.CommandEventHandler):
 
             if summary is None:
                 args.executeFailed = True  # cancelled: roll back
-                args.executeFailedMessage = 'Shrinkwrap cancelled.'
+                args.executeFailedMessage = f'{CMD_NAME} cancelled.'
                 return
-            ui.messageBox(summary, 'Shrinkwrap')
+            ui.messageBox(summary, CMD_NAME)
         except ShrinkwrapError as e:
             args.executeFailed = True
-            ui.messageBox(f'{e}\n\n{log_line}'.strip(), 'Shrinkwrap')
+            ui.messageBox(f'{e}\n\n{log_line}'.strip(), CMD_NAME)
         except Exception:
             args.executeFailed = True
-            ui.messageBox(f'Shrinkwrap failed:\n{traceback.format_exc()}\n{log_line}'.strip(),
-                          'Shrinkwrap')
+            ui.messageBox(f'{CMD_NAME} failed:\n{traceback.format_exc()}\n{log_line}'.strip(),
+                          CMD_NAME)
 
 
 class ShrinkwrapInputChangedHandler(adsk.core.InputChangedEventHandler):
@@ -1444,7 +1444,7 @@ class ShrinkwrapCreatedHandler(adsk.core.CommandCreatedEventHandler):
             inputs = cmd.commandInputs
             design = _active_design()
             single = _find_single_body(design) if design else None
-            cmd.okButtonText = 'Fill cavities' if single else 'Shrinkwrap'
+            cmd.okButtonText = 'Fill cavities' if single else CMD_NAME
 
             fill = inputs.addDropDownCommandInput(
                 INPUT_FILL, 'Fill', adsk.core.DropDownStyles.TextListDropDownStyle)
@@ -1505,7 +1505,7 @@ class ShrinkwrapCreatedHandler(adsk.core.CommandCreatedEventHandler):
                         'Material density is worked out from the chosen mass.')
             else:
                 info = 'Material density is worked out from the chosen mass.'
-            info += ('<br><b>If Fusion freezes, restart it and run Shrinkwrap again</b> '
+            info += ('<br><b>If Fusion freezes, restart it and run Petrify again</b> '
                      '(save first). The part that caused the freeze is skipped next time.')
             inputs.addTextBoxCommandInput(INPUT_INFO, '', info, 4, True)
 
@@ -1515,16 +1515,17 @@ class ShrinkwrapCreatedHandler(adsk.core.CommandCreatedEventHandler):
                 event.add(handler)
                 handlers.append(handler)
         except Exception:
-            _app().userInterface.messageBox(traceback.format_exc(), 'Shrinkwrap')
+            _app().userInterface.messageBox(traceback.format_exc(), CMD_NAME)
 
 
 # ----------------------------------------------------------------------------
-# Set Mass command: give selected bodies an exact total mass by tuning the
+# Ordain Mass command (formerly Set Mass; the command ID is unchanged so
+# toolbar customisations survive): give selected bodies an exact total mass by tuning the
 # density of a material of their own (same method as Shrinkwrap).
 # ----------------------------------------------------------------------------
 
 SETMASS_CMD_ID = 'DaneccaSetMassCmd'
-SETMASS_CMD_NAME = 'Set Mass'
+SETMASS_CMD_NAME = 'Ordain Mass'
 SETMASS_TOOLTIP = ('Give the selected bodies an exact total mass by adjusting the density '
                    'of their material (a copy, so other bodies are not affected).')
 SETMASS_BODIES = 'setmass_bodies'
@@ -1585,7 +1586,7 @@ class SetMassExecuteHandler(adsk.core.CommandEventHandler):
             ui.messageBox(str(e), SETMASS_CMD_NAME)
         except Exception:
             args.executeFailed = True
-            ui.messageBox('Set Mass failed:\n{}'.format(traceback.format_exc()), SETMASS_CMD_NAME)
+            ui.messageBox(f'{SETMASS_CMD_NAME} failed:\n{traceback.format_exc()}', SETMASS_CMD_NAME)
 
 
 class SetMassInputChangedHandler(adsk.core.InputChangedEventHandler):
@@ -1625,7 +1626,7 @@ class SetMassCreatedHandler(adsk.core.CommandCreatedEventHandler):
     def notify(self, args):
         try:
             cmd = args.command
-            cmd.okButtonText = 'Set mass'
+            cmd.okButtonText = 'Ordain mass'
             inputs = cmd.commandInputs
 
             sel = inputs.addSelectionInput(SETMASS_BODIES, 'Bodies', 'Select solid bodies')
@@ -1795,7 +1796,7 @@ def _start_update_check():
 
 COMMANDS = (
     (CMD_ID, CMD_NAME, CMD_TOOLTIP, './resources/ShrinkwrapButton', ShrinkwrapCreatedHandler),
-    (SETMASS_CMD_ID, SETMASS_CMD_NAME, SETMASS_TOOLTIP, './resources/SetMassButton',
+    (SETMASS_CMD_ID, SETMASS_CMD_NAME, SETMASS_TOOLTIP, './resources/OrdainMassButton',
      SetMassCreatedHandler),
     (UPDATE_CMD_ID, UPDATE_CMD_NAME, UPDATE_TOOLTIP, './resources/UpdateButton',
      UpdateCreatedHandler),
