@@ -6,7 +6,7 @@
     "description": {
         "": "Petrify a part or assembly into one solid body with matching mass, and ordain any body's mass by adjusting its material density"
     },
-    "version": "2.0.0",
+    "version": "2.0.1",
     "runOnStartup": true,
     "supportedOS": "windows|mac",
     "editEnabled": true

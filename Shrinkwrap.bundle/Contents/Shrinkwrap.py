@@ -26,7 +26,7 @@ import traceback
 MIGRATION_STUB = True   # Petrify recognises (and cleans up) the stub by this line.
 
 # Must equal the release tag, or pre-rename updaters refuse to install this.
-SHRINKWRAP_VERSION = '2.0.0'
+SHRINKWRAP_VERSION = '2.0.1'
 
 EVENT_ID = 'DaneccaShrinkwrapMigration'
 START_DELAY = 5         # seconds, so Fusion has finished starting

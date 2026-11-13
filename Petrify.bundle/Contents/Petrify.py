@@ -50,7 +50,7 @@ if _HERE not in sys.path:
 import petrify_updater as updater  # noqa: E402
 importlib.reload(updater)  # pick up a new version on add-in Stop/Run
 
-PETRIFY_VERSION = '2.0.0'
+PETRIFY_VERSION = '2.0.1'
 
 # Command IDs keep the add-in's former name (Shrinkwrap) so Fusion toolbar
 # customisations made before the rename keep working. Don't rename them.

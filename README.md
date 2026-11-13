@@ -1,6 +1,6 @@
 # Petrify
 
-Fusion add-in with buttons in **Solid → Modify**. Version 2.0.0.
+Fusion add-in with buttons in **Solid → Modify**. Version 2.0.1.
 
 *Called **Shrinkwrap** until v2.0.0 — see [Renamed from Shrinkwrap](#renamed-from-shrinkwrap).*
 
