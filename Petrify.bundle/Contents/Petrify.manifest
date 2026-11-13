@@ -1,0 +1,13 @@
+{
+    "autodeskProduct": "Fusion360",
+    "type": "addin",
+    "id": "Petrify",
+    "author": "Danecca Ltd",
+    "description": {
+        "": "Petrify a part or assembly into one solid body with matching mass, and ordain any body's mass by adjusting its material density"
+    },
+    "version": "2.0.0",
+    "runOnStartup": true,
+    "supportedOS": "windows|mac",
+    "editEnabled": true
+}

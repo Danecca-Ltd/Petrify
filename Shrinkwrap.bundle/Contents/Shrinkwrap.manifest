@@ -4,9 +4,9 @@
     "id": "Shrinkwrap",
     "author": "Danecca Ltd",
     "description": {
-        "": "Shrinkwrap a part or assembly into one solid body with matching mass, and set any body's mass by adjusting its material density"
+        "": "Shrinkwrap has been renamed Petrify. This placeholder installs Petrify and then removes itself."
     },
-    "version": "1.4.1",
+    "version": "2.0.0",
     "runOnStartup": true,
     "supportedOS": "windows|mac",
     "editEnabled": true

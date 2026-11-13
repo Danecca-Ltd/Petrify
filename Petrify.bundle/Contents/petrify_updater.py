@@ -1,4 +1,4 @@
-"""Shrinkwrap self-updater (see the development guide, section 19).
+"""Petrify self-updater (see the development guide, section 19).
 
 Finds the newest vX.Y.Z tag of the GitHub repo and installs that release over
 the live bundle with a stage-then-swap, so a failed update never leaves a
@@ -10,7 +10,11 @@ Differences from the guide's reference design:
   used if one is already cached (raises GitHub's rate limit), but the user is
   never prompted and Git doesn't have to be installed.
 - A downloaded bundle is checked before it goes live: it must contain the
-  add-in files and its SHRINKWRAP_VERSION must match the tag.
+  add-in files and its PETRIFY_VERSION must match the tag.
+
+The repo also holds a Shrinkwrap.bundle migration stub for installs from
+before the rename (see Shrinkwrap.bundle/Contents/Shrinkwrap.py); this
+updater only ever installs Petrify.bundle.
 """
 
 import json
@@ -26,13 +30,13 @@ import urllib.request
 import zipfile
 
 GITHUB_OWNER = 'Danecca-Ltd'
-GITHUB_REPO = 'Shrinkwrap'
-USER_AGENT = 'Shrinkwrap-Fusion-Addin'
-BUNDLE_NAME = 'Shrinkwrap.bundle'
-MAIN_FILE = 'Contents/Shrinkwrap.py'      # inside the bundle
+GITHUB_REPO = 'Petrify'
+USER_AGENT = 'Petrify-Fusion-Addin'
+BUNDLE_NAME = 'Petrify.bundle'
+MAIN_FILE = 'Contents/Petrify.py'         # inside the bundle
 PRESERVE = ('.env',)                      # user files carried over an update
 TAG_PATTERN = re.compile(r'^v?\d+\.\d+\.\d+$')
-VERSION_PATTERN = re.compile(r"^SHRINKWRAP_VERSION\s*=\s*['\"]([^'\"]+)['\"]", re.M)
+VERSION_PATTERN = re.compile(r"^PETRIFY_VERSION\s*=\s*['\"]([^'\"]+)['\"]", re.M)
 
 
 class UpdateError(Exception):
@@ -227,7 +231,7 @@ def download_and_install(tag, token=None, addins_dir=None, log=lambda msg: None)
     failure; the live bundle is then left as it was.
     """
     addins_dir = addins_dir or addins_install_path()
-    temp_dir = tempfile.mkdtemp(prefix='shrinkwrap_update_')
+    temp_dir = tempfile.mkdtemp(prefix='petrify_update_')
     try:
         # 1. Download the release archive.
         url = f'https://api.github.com/repos/{GITHUB_OWNER}/{GITHUB_REPO}/zipball/{tag}'
@@ -237,7 +241,7 @@ def download_and_install(tag, token=None, addins_dir=None, log=lambda msg: None)
             shutil.copyfileobj(response, f)
 
         # 2. Extract just the .bundle folder. GitHub archives have a single
-        #    root folder like "Danecca-Ltd-Shrinkwrap-abc1234/".
+        #    root folder like "Danecca-Ltd-Petrify-abc1234/".
         extract_dir = os.path.join(temp_dir, 'extracted')
         with zipfile.ZipFile(zip_path) as zf:
             names = zf.namelist()

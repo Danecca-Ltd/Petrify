@@ -1,14 +1,16 @@
-# Shrinkwrap
+# Petrify
 
-Fusion add-in with buttons in **Solid → Modify**. Version 1.4.1.
+Fusion add-in with buttons in **Solid → Modify**. Version 2.0.0.
 
-- **Petrify** (formerly *Shrinkwrap*) turns the open part or assembly into one solid body in a new internal
+*Called **Shrinkwrap** until v2.0.0 — see [Renamed from Shrinkwrap](#renamed-from-shrinkwrap).*
+
+- **Petrify** turns the open part or assembly into one solid body in a new internal
   component, with the same mass and a marker at the original center of mass. On a design
   with a single visible body it fills that body's cavities in place instead (see
   *Single-body mode*).
-- **Ordain Mass** (formerly *Set Mass*) gives the selected bodies an exact total mass by
-  adjusting their material's density.
-- **Shrinkwrap Updates** checks GitHub for a newer version and installs it (see *Updates*).
+- **Ordain Mass** gives the selected bodies an exact total mass by adjusting their
+  material's density.
+- **Petrify Updates** checks GitHub for a newer version and installs it (see *Updates*).
 
 ## Petrify dialog
 
@@ -45,29 +47,29 @@ The dialog also reminds you: **if Fusion freezes, restart it and run Petrify aga
 
 1. Takes every **visible solid body** in the design, including bodies in sub-assemblies
    and referenced components. Hidden bodies and surface bodies are ignored. Components
-   made by an earlier Petrify run are ignored too.
+   made by an earlier run (including Shrinkwrap runs) are ignored too.
 2. Unites them into one solid. Faces where parts touch, and parts buried inside other
    parts, disappear.
 3. Fills sealed internal cavities, and with Fill = Envelope everything enclosed.
-4. Creates a new component `<name> shrinkwrap` holding the body (also named
-   `<name> shrinkwrap`). In a parametric design it's one Base Feature in the timeline.
+4. Creates a new component `<name> petrified` holding the body (also named
+   `<name> petrified`). In a parametric design it's one Base Feature in the timeline.
 5. Copies the default material to `<name> material` and tunes its density so the
-   shrinkwrap's mass equals the original bodies' total mass, or the manual mass.
+   petrified body's mass equals the original bodies' total mass, or the manual mass.
 6. Optionally adds a construction point **Center of mass** at the original bodies'
-   mass-weighted center of mass. This is the *original* center of mass; the shrinkwrap's
-   own center of mass (uniform density) will usually differ.
+   mass-weighted center of mass. This is the *original* center of mass; the petrified
+   body's own center of mass (uniform density) will usually differ.
 
 `<name>` is the document name without its version suffix. The source design is not
 changed.
 
 ## Single-body mode
 
-When the design has exactly one visible solid body — a shrinkwrap with its source parts
-hidden, or a one-body part — Petrify fills that body's cavities **in place** (the OK
+When the design has exactly one visible solid body — a petrified body with its source
+parts hidden, or a one-body part — Petrify fills that body's cavities **in place** (the OK
 button reads *Fill cavities*) and re-tunes the density so its mass stays the same, or
 matches a manual mass. Use it as a second pass: hide the sources and run it on the
-shrinkwrap with a different wall thickness, or on any single-body part to "de-swiss-cheese"
-it.
+petrified body with a different wall thickness, or on any single-body part to
+"de-swiss-cheese" it.
 
 - A Petrify output in a parametric design has its Base Feature updated, so the timeline
   doesn't grow.
@@ -77,16 +79,17 @@ it.
 ## Ordain Mass
 
 Select one or more solid bodies (the only visible body is preselected), type the total
-mass, *Ordain mass*. The bodies get a material of their own — a copy of their current material named
-`<component> material` (`<design> material` for root bodies), or the existing one if it
-already has that name or was made by Petrify — and its density is tuned so the
-selection weighs exactly that. Other bodies sharing the original material are unaffected.
+mass, *Ordain mass*. The bodies get a material of their own — a copy of their current
+material named `<component> material` (`<design> material` for root bodies), or the
+existing one if it already has that name or was made by Petrify — and its density is
+tuned so the selection weighs exactly that. Other bodies sharing the original material
+are unaffected.
 
 ## Logs
 
-Every Petrify and Ordain Mass run writes a log to `Documents\Shrinkwrap logs\` (the newest
-30 are kept; the summary shows the file name). Each line is written to disk immediately,
-so if Fusion freezes or crashes the log still ends with the step it was on — for example
+Every Petrify and Ordain Mass run writes a log to `Documents\Petrify logs\` (the newest 30
+are kept; the summary shows the file name). Each line is written to disk immediately, so
+if Fusion freezes or crashes the log still ends with the step it was on — for example
 `Union 57/58: "Sub / Bracket:1" (412 faces, ...)` with no `united` line after it means
 Fusion got stuck uniting that body. Errors are logged with their full traceback.
 
@@ -110,18 +113,19 @@ file); both files are in the log folder.
 
 ## Install
 
-Run `Deploy.bat`, then in Fusion: Utilities → Add-Ins → Shrinkwrap → Stop, then Run (or
-restart Fusion). Installs to `%APPDATA%\Autodesk\ApplicationPlugins\Shrinkwrap.bundle`.
+Run `Deploy.bat`, then restart Fusion. It installs to
+`%APPDATA%\Autodesk\ApplicationPlugins\Petrify.bundle` and removes an old
+`Shrinkwrap.bundle` if there is one.
 
 ## Updates
 
-The add-in updates itself from this GitHub repo (`shrinkwrap_updater.py`, following
-section 19 of the Fusion Plugin Development Guide):
+The add-in updates itself from this GitHub repo (`petrify_updater.py`, following section
+19 of the Fusion Plugin Development Guide):
 
 - **At startup** it checks GitHub in the background (30 s after Fusion loads, so it never
   slows start-up). If a newer release exists it asks once per release: *Download and
   install it now?* Offline or any error: it stays silent.
-- **Solid → Modify → Shrinkwrap Updates** checks on demand and offers to install.
+- **Solid → Modify → Petrify Updates** checks on demand and offers to install.
 - Installing downloads the release, checks it (complete bundle, version matches the
   tag), copies it next to the live bundle and swaps the two folders, restoring the old
   one if the swap fails. Restart Fusion to use the new version.
@@ -129,13 +133,32 @@ section 19 of the Fusion Plugin Development Guide):
   cached by Git Credential Manager is used if present (higher GitHub rate limit), but
   you're never prompted.
 
+## Renamed from Shrinkwrap
+
+Until v2.0.0 this add-in was **Shrinkwrap** (repo `Danecca-Ltd/Shrinkwrap`, which now
+redirects here; buttons Shrinkwrap / Set Mass / Shrinkwrap Updates).
+
+- **Existing installs move over by themselves.** Their updater only installs
+  `Shrinkwrap.bundle`, so this repo keeps a small migration stub under that name. Old
+  installs update into it; on the next Fusion start the stub installs Petrify, removes
+  itself and asks for a restart. Keep the stub until no pre-2.0 installs are left.
+- Petrify also removes a leftover full `Shrinkwrap.bundle` at startup (both share button
+  IDs, so every click would run twice) and asks for a restart.
+- Kept on purpose: the button IDs (`DaneccaShrinkwrapCmd`, ...), so toolbar
+  customisations survive; and the hidden output marker (attribute group `Shrinkwrap`),
+  so components made by Shrinkwrap are still recognised. Earlier outputs keep their
+  `<name> shrinkwrap` names.
+- The freeze skip list is copied from `Documents\Shrinkwrap logs` to `Documents\Petrify logs`.
+
 ## Releasing
 
-1. Bump the version in four places: `PackageContents.xml` (×2), `Shrinkwrap.manifest`,
-   and `SHRINKWRAP_VERSION` in `Shrinkwrap.py`.
+1. `.\bump_version.ps1 X.Y.Z` — sets the version everywhere: Petrify's
+   `PackageContents.xml` (×2), `Petrify.manifest` and `PETRIFY_VERSION`; the migration
+   stub's files and its `SHRINKWRAP_VERSION` (pre-2.0 updaters refuse a release whose
+   stub version differs from the tag); and this README. It also refreshes the stub's copy
+   of the updater.
 2. Commit and push.
-3. Tag the commit `vX.Y.Z` (matching `SHRINKWRAP_VERSION` — the updater refuses a
-   mismatch) and push the tag: `git tag v1.3.0 && git push origin v1.3.0`.
+3. Tag the commit `vX.Y.Z` and push the tag: `git tag vX.Y.Z; git push origin vX.Y.Z`.
 
 Users get the update offered at their next Fusion start. An untagged commit is never
 offered.
